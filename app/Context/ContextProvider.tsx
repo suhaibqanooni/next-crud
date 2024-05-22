@@ -4,12 +4,16 @@ import { AuthContext } from "./AuthContext";
 import { localVariable } from "@/data";
 
 function ContextProvider({ children }: { children: React.ReactNode }) {
-  const storedUser = localStorage.getItem(localVariable.user);
-  const initialUser = storedUser ? JSON.parse(storedUser) : {};
+  let initialUser = {};
+  let initialAccessToken = {};
+  if (typeof window !== "undefined") {
+    const storedUser = localStorage.getItem(localVariable.user);
+    initialUser = storedUser ? JSON.parse(storedUser) : {};
+    initialAccessToken = localStorage.getItem(localVariable.accessToken) || "";
+  }
+
   const [user, setUser] = useState(initialUser);
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem(localVariable.accessToken) || ""
-  );
+  const [accessToken, setAccessToken] = useState(initialAccessToken);
 
   return (
     <div>

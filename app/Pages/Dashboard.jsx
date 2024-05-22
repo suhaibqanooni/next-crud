@@ -17,7 +17,9 @@ export default function Dashboard() {
   const [updatingId, setUpdatingId] = useState(Number);
   const [data, setData] = useState(Array);
   const [checkedList, setCheckedList] = useState(
-    JSON.parse(authContext.user?.productTableViewColumns)
+    authContext.user?.productTableViewColumns
+      ? JSON.parse(authContext.user?.productTableViewColumns)
+      : []
   );
   const columns = [
     { field: "sno", headerName: "#", width: 100, key: "1" },

@@ -8,8 +8,10 @@ function Page() {
   const { user, setUser, setAccessToken } = useContext(AuthContext);
   const logout = () => {
     window.location.replace("/");
-    localStorage.removeItem(localVariable.accessToken);
-    localStorage.removeItem(localVariable.user);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(localVariable.accessToken);
+      localStorage.removeItem(localVariable.user);
+    }
     setTimeout(() => {
       setUser(null);
       setAccessToken(null);

@@ -3,7 +3,10 @@ import axios from "axios";
 const baseURL = "https://nest-crud-2e5o.onrender.com";
 
 const apiCall = async (method, endpoint, data) => {
-  const user = JSON.parse(window.localStorage.getItem("user"));
+  let user = {};
+  if (typeof window !== "undefined") {
+    user = JSON.parse(window.localStorage.getItem("user"));
+  }
   const headers = {
     "Content-Type": "application/json",
     authorization: user?.role,

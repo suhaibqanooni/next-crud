@@ -15,14 +15,19 @@ const LoginPage = () => {
     apiCall("POST", "user/login", { email, password })
       .then((response) => {
         if (response.data.access_token) {
-          localStorage.setItem(
-            localVariable.accessToken,
-            response.data.access_token
-          );
           setAccessToken(response.data.access_token);
           const loggedUser = jwtDecode(response.data.access_token);
           setUser(loggedUser);
-          localStorage.setItem(localVariable.user, JSON.stringify(loggedUser));
+          if (typeof window !== "undefined") {
+            localStorage.setItem(
+              localVariable.accessToken,
+              response.data.access_token
+            );
+            localStorage.setItem(
+              localVariable.user,
+              JSON.stringify(loggedUser)
+            );
+          }
         } else setResponseErrorMessage(response.data.error);
       })
       .catch((error) => {
