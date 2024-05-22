@@ -4,8 +4,10 @@ import { userRolesOptions } from "@/data";
 import apiCall from "../api/ApiCall";
 import { Loader } from "./Loader";
 import { message } from "antd";
-
-function UserCreateForm({ setShowUserModal }) {
+interface UserCreateFormProps {
+  setShowUserModal: (show: boolean) => void; // Explicitly define the type
+}
+function UserCreateForm({ setShowUserModal }: UserCreateFormProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
