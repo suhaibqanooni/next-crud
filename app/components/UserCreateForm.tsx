@@ -75,7 +75,7 @@ function UserCreateForm({ setShowUserModal }: UserCreateFormProps) {
               name="age"
               label="age"
               type="number"
-              value={formData.age}
+              value={formData.age.toString()}
               onChange={(e) => {
                 setFormData((prevData) => ({
                   ...prevData,

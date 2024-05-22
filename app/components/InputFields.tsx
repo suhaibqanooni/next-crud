@@ -31,7 +31,7 @@ interface InputSelectFieldProps {
   name: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: [];
+  options: string[];
 }
 export const InputSelectField = ({
   label,
