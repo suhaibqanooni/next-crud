@@ -128,8 +128,9 @@ export default function Dashboard() {
       })
       .catch((err) => {
         console.log(err.response.data.message);
-        message.error("Check your Internet connection");
-        console.log(err.response.data.message);
+        if (err.response.data.message === "Internal Server Error")
+          message.error("Check your Internet connection");
+        message.error(err.response.data.message);
       });
   };
 
@@ -155,6 +156,7 @@ export default function Dashboard() {
   };
 
   const deleteRecord = (id) => {
+    setLoading(true);
     if (confirm("You are deleting this record. press ok to confirm!") == true) {
       apiCall("DELETE", endpoint + "/" + id)
         .then((res) => {
@@ -200,7 +202,6 @@ export default function Dashboard() {
         CRUD Using Nestjs, Prisma and PostgreSQL
       </h1>
       {loading && <Loader />}
-      {/* {data.length > 0 ? ( */}
       <>
         <div className="d-flex justify-content-between">
           <a
@@ -295,8 +296,7 @@ export default function Dashboard() {
           style={{ marginTop: 24 }}
         />
       </>
-      {/* ) : ( // <p style={{ textAlign: "center" }}>No Data</p>
-       )} */}
+
       {showModal && (
         <div
           className="modal"

@@ -35,21 +35,21 @@ const LoginPage = () => {
       });
   };
   return (
-    <section class="vh-100">
-      <div class="container py-5 h-100">
-        <div class="row d-flex align-items-center justify-content-center h-100">
-          <div class="col-md-8 col-lg-7 col-xl-6">
+    <section className="vh-100">
+      <div className="container py-5 h-100">
+        <div className="row d-flex align-items-center justify-content-center h-100">
+          <div className="col-md-8 col-lg-7 col-xl-6">
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-              class="img-fluid"
+              className="img-fluid"
               alt="Phone image"
             />
           </div>
-          <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+          <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
             <h1>Login Info</h1>
             <div>
               <p style={{ color: "red" }}>{responseErrorMessage}</p>
-              <div data-mdb-input-init class="form-outline mb-4">
+              <div data-mdb-input-init className="form-outline mb-4">
                 <InputField
                   name="email"
                   label="Email"
@@ -57,7 +57,7 @@ const LoginPage = () => {
                 />
               </div>
 
-              <div data-mdb-input-init class="form-outline mb-4">
+              <div data-mdb-input-init className="form-outline mb-4">
                 <InputField
                   name="password"
                   label="Password"
@@ -67,7 +67,7 @@ const LoginPage = () => {
               </div>
               <a href="#">Forgot password?</a>
               <button
-                class="btn btn-primary btn-lg btn-block w-100"
+                className="btn btn-primary btn-lg btn-block w-100"
                 onClick={() => login()}
               >
                 Sign in

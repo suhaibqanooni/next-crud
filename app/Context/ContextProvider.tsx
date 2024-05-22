@@ -1,19 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { localVariable } from "@/data";
 
 function ContextProvider({ children }: { children: React.ReactNode }) {
-  let initialUser = {};
-  let initialAccessToken = {};
-  if (typeof window !== "undefined") {
-    const storedUser = localStorage.getItem(localVariable.user);
-    initialUser = storedUser ? JSON.parse(storedUser) : {};
-    initialAccessToken = localStorage.getItem(localVariable.accessToken) || "";
-  }
+  const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const [user, setUser] = useState(initialUser);
-  const [accessToken, setAccessToken] = useState(initialAccessToken);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem(localVariable.user);
+      const storedAccessToken = localStorage.getItem(localVariable.accessToken);
+
+      if (storedUser && storedAccessToken) {
+        setUser(JSON.parse(storedUser));
+        setAccessToken(storedAccessToken);
+      }
+
+      setIsInitialized(true);
+    }
+  }, []);
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <div>
