@@ -7,7 +7,7 @@ export const Loader = () => {
         justifyContent: "center",
       }}
     >
-      <div className="spinner-border text-success" role="status">
+      <div className="spinner-border text-danger" role="status">
         <span className="sr-only">Loading...</span>
       </div>
     </div>

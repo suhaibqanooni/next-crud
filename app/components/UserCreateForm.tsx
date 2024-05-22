@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { InputField, InputSelectField } from "./InputFields";
-import { categoryOptions, userRolesOptions } from "@/data";
+import { userRolesOptions } from "@/data";
 import apiCall from "../api/ApiCall";
+import { Loader } from "./Loader";
+import { message } from "antd";
 
 function UserCreateForm({ setShowUserModal }) {
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,12 +16,15 @@ function UserCreateForm({ setShowUserModal }) {
     password: "",
   });
   const addRecord = () => {
+    setLoading(true);
     apiCall("POST", "user", formData)
       .then((result) => {
         setShowUserModal(false);
+        message.success("User created successfully");
       })
       .catch((err) => {
         console.log("____", err.response);
+        setLoading(false);
         if (err.response.data.statusCode === 403)
           setErrorMessage("You Dont have permission to perform this action");
         else setErrorMessage(err.response.data.message[0]);
@@ -103,28 +109,35 @@ function UserCreateForm({ setShowUserModal }) {
             />
           </div>
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                setFormData({
-                  name: "",
-                  email: "",
-                  age: 0,
-                  role: "",
-                  password: "",
-                });
-              }}
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => addRecord()}
-            >
-              Add
-            </button>
+            {loading ? (
+              <Loader />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowUserModal(false);
+                    setFormData({
+                      name: "",
+                      email: "",
+                      age: 0,
+                      role: "",
+                      password: "",
+                    });
+                  }}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => addRecord()}
+                >
+                  Add
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import axios from "axios";
-const baseURL = "http://localhost:8000";
+// const baseURL = "http://localhost:8000";
+const baseURL = "https://nest-crud-2e5o.onrender.com";
 
 const apiCall = async (method, endpoint, data) => {
   const user = JSON.parse(window.localStorage.getItem("user"));

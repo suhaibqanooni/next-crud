@@ -6,11 +6,12 @@ import { categoryOptions, localVariable, userRolesOptions } from "../../data";
 import { InputField, InputSelectField } from "../components/InputFields";
 import { AuthContext } from "../Context/AuthContext";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { Select, Table } from "antd";
+import { Select, Table, message } from "antd";
 import UserCreateForm from "../components/UserCreateForm";
 const endpoint = "product";
 export default function Dashboard() {
   const authContext = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [updatingId, setUpdatingId] = useState(Number);
@@ -104,9 +105,17 @@ export default function Dashboard() {
     window.location.replace("/");
   };
   const fetchData = () => {
+    setLoading(true);
+
     apiCall("GET", endpoint)
-      .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   const addRecord = () => {
@@ -117,7 +126,8 @@ export default function Dashboard() {
       })
       .catch((err) => {
         console.log(err.response.data.message);
-        alert(err.response.data.message);
+        message.error("Check your Internet connection");
+        console.log(err.response.data.message);
       });
   };
 
@@ -184,109 +194,107 @@ export default function Dashboard() {
   }));
   return (
     <div className="container">
-      <h1>CRUD Using Nestjs, Prisma and PostgreSQL</h1>
-      {data.length > 0 ? (
-        <>
-          <div className="d-flex justify-content-between">
-            <a
-              className="btn btn-success"
-              onClick={() => {
-                setShowModal(true);
-              }}
-            >
-              + Add
-            </a>
-            <div style={{ height: 38 }}>
-              <p>
-                <a href="/profile">
-                  {authContext.user.name} ({authContext.user.role})
-                </a>
-                <button className="btn btn-dark" onClick={() => logout()}>
-                  Logout
-                </button>
-                {authContext.user.role === userRolesOptions[0] && (
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => setShowUserModal(true)}
-                  >
-                    Create User
-                  </button>
-                )}
-              </p>
-            </div>
-          </div>
-          <h1>Material UI</h1>
-          <div style={{ width: "100%" }}>
-            <DataGrid
-              columns={columns}
-              rows={data.map((row, i) => ({
-                sno: i + 1,
-                id: row.id,
-                title: row.title,
-                price: row.price,
-                category: row.category,
-              }))}
-              slots={{
-                toolbar: GridToolbar,
-              }}
-              columnVisibilityModel={columnVisibility}
-              onColumnVisibilityModelChange={handleColumnVisibilityChange}
-            />
-          </div>
-          <h1>Antd</h1>
-          <Select
-            mode="multiple"
-            size="middle"
-            placeholder="Select the Columns"
-            defaultValue={checkedList}
-            onChange={(e) => {
-              changeSettings(e);
+      <h1 style={{ textAlign: "center" }}>
+        CRUD Using Nestjs, Prisma and PostgreSQL
+      </h1>
+      {loading && <Loader />}
+      {/* {data.length > 0 ? ( */}
+      <>
+        <div className="d-flex justify-content-between">
+          <a
+            className="btn btn-success"
+            onClick={() => {
+              setShowModal(true);
             }}
-            style={{ width: "100%" }}
-            options={columns1.map((op) => ({ label: op.title, value: op.key }))}
-            filterOption={(input, option) =>
-              option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-          />
-          <Table
-            columns={newColumns}
-            dataSource={data.map((item, i) => ({
+          >
+            + Add
+          </a>
+          <div style={{ height: 38 }}>
+            <p>
+              <a href="/profile">
+                {authContext.user.name} ({authContext.user.role})
+              </a>
+              <button className="btn btn-dark" onClick={() => logout()}>
+                Logout
+              </button>
+              {authContext.user.role === userRolesOptions[0] && (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowUserModal(true)}
+                >
+                  Create User
+                </button>
+              )}
+            </p>
+          </div>
+        </div>
+        <h1>Material UI</h1>
+        <div style={{ width: "100%" }}>
+          <DataGrid
+            columns={columns}
+            rows={data.map((row, i) => ({
               sno: i + 1,
-              id: item.id,
-              title: item.title,
-              price: item.price,
-              category: item.category,
-              action: (
-                <>
-                  <button
-                    onClick={() => {
-                      setFormData({
-                        title: item.title,
-                        price: item.price,
-                        category: item.category,
-                      });
-                      setUpdatingId(item.id);
-                      setShowModal(true);
-                    }}
-                  >
-                    <img
-                      src="assets/images/pencil.png"
-                      width={30}
-                      height={30}
-                    />
-                  </button>
-                  <button onClick={() => deleteRecord(item.id)}>
-                    <img src="assets/images/trash.png" width={30} height={30} />
-                  </button>
-                </>
-              ),
+              id: row.id,
+              title: row.title,
+              price: row.price,
+              category: row.category,
             }))}
-            style={{ marginTop: 24 }}
+            slots={{
+              toolbar: GridToolbar,
+            }}
+            columnVisibilityModel={columnVisibility}
+            onColumnVisibilityModelChange={handleColumnVisibilityChange}
           />
-        </>
-      ) : (
-        <Loader />
-      )}
+        </div>
+        <h1>Antd</h1>
+        <Select
+          mode="multiple"
+          size="middle"
+          placeholder="Select the Columns"
+          defaultValue={checkedList}
+          onChange={(e) => {
+            changeSettings(e);
+          }}
+          style={{ width: "100%" }}
+          options={columns1.map((op) => ({ label: op.title, value: op.key }))}
+          filterOption={(input, option) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+        />
+        <Table
+          columns={newColumns}
+          dataSource={data.map((item, i) => ({
+            sno: i + 1,
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            category: item.category,
+            action: (
+              <>
+                <button
+                  onClick={() => {
+                    setFormData({
+                      title: item.title,
+                      price: item.price,
+                      category: item.category,
+                    });
+                    setUpdatingId(item.id);
+                    setShowModal(true);
+                  }}
+                >
+                  <img src="assets/images/pencil.png" width={30} height={30} />
+                </button>
+                <button onClick={() => deleteRecord(item.id)}>
+                  <img src="assets/images/trash.png" width={30} height={30} />
+                </button>
+              </>
+            ),
+          }))}
+          style={{ marginTop: 24 }}
+        />
+      </>
+      {/* ) : ( // <p style={{ textAlign: "center" }}>No Data</p>
+       )} */}
       {showModal && (
         <div
           className="modal"
