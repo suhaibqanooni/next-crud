@@ -1,4 +1,17 @@
-export const InputField = ({ label, name, value, onChange, type }) => {
+interface InputFieldProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  type: string;
+}
+export const InputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  type,
+}: InputFieldProps) => {
   return (
     <>
       <label>{label}</label>
@@ -13,7 +26,20 @@ export const InputField = ({ label, name, value, onChange, type }) => {
   );
 };
 
-export const InputSelectField = ({ label, name, value, onChange, options }) => {
+interface InputSelectFieldProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  options: [];
+}
+export const InputSelectField = ({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+}: InputSelectFieldProps) => {
   return (
     <>
       <label>{label}</label>
