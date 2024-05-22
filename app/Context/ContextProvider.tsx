@@ -5,10 +5,10 @@ import { localVariable } from "@/data";
 
 function ContextProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem(localVariable.user))
+    JSON.parse(localStorage.getItem(localVariable.user) || {})
   );
   const [accessToken, setAccessToken] = useState(
-    localStorage.getItem(localVariable.accessToken)
+    localStorage.getItem(localVariable.accessToken) || ""
   );
 
   return (
