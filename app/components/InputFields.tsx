@@ -25,8 +25,10 @@ export const InputSelectField = ({ label, name, value, onChange, options }) => {
         onChange={onChange}
       >
         <option value="">Select Category</option>
-        {options.map((op) => (
-          <option value={op}>{op}</option>
+        {options.map((op, i) => (
+          <option value={op} key={i + 1}>
+            {op}
+          </option>
         ))}
       </select>
     </>

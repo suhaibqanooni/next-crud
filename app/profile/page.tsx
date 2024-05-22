@@ -4,7 +4,7 @@ import { AuthContext } from "../Context/AuthContext";
 import { localVariable } from "@/data";
 import useAuthorization from "../Hooks/useAuthorization";
 
-function page() {
+function Page() {
   const { user, setUser, setAccessToken } = useContext(AuthContext);
   const logout = () => {
     window.location.replace("/");
@@ -98,4 +98,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
