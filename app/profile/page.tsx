@@ -3,15 +3,16 @@ import React, { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { localVariable } from "@/data";
 import useAuthorization from "../Hooks/useAuthorization";
+import { removeFromLocalStorage } from "../Context/Actions";
+import Header from "../components/Header";
+import { Edit } from "@mui/icons-material";
 
 function Page() {
   const { user, setUser, setAccessToken } = useContext(AuthContext);
   const logout = () => {
     window.location.replace("/");
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(localVariable.accessToken);
-      localStorage.removeItem(localVariable.user);
-    }
+    removeFromLocalStorage(localVariable.accessToken);
+    removeFromLocalStorage(localVariable.user);
     setTimeout(() => {
       setUser(null);
       setAccessToken(null);
@@ -24,6 +25,7 @@ function Page() {
   }
   return (
     <section className="vh-100" style={{ backgroundColor: "#f4f5f7" }}>
+      <Header />
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col col-lg-6 mb-4 mb-lg-0">
@@ -52,11 +54,7 @@ function Page() {
                     <div className="d-flex justify-content-between">
                       <h6>Information</h6>
                       <a onClick={() => alert("Edit feature will be added...")}>
-                        <img
-                          src="assets/images/pencil.png"
-                          width={30}
-                          height={30}
-                        />
+                        <Edit />
                       </a>
                     </div>
                     <hr className="mt-0 mb-4" />
@@ -75,7 +73,8 @@ function Page() {
                     <div className="row pt-1">
                       <div className="col-6 mb-3">
                         <h6>Recent</h6>
-                        <p className="text-muted">Lorem ipsum</p>
+                        <p className="text-muted">Project 1</p>
+                        <p className="text-muted">Project 2</p>
                       </div>
                       <div className="col-6 mb-3">
                         <h6>Most Viewed</h6>

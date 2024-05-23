@@ -25,7 +25,6 @@ function UserCreateForm({ setShowUserModal }: UserCreateFormProps) {
         message.success("User created successfully");
       })
       .catch((err) => {
-        console.log("____", err.response);
         setLoading(false);
         if (err.response.data.statusCode === 403)
           setErrorMessage("You Dont have permission to perform this action");
@@ -43,7 +42,7 @@ function UserCreateForm({ setShowUserModal }: UserCreateFormProps) {
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-header flex justify-content-between">
-            <h5 className="modal-title">Add new</h5>
+            <h5 className="modal-title">Create New User</h5>
           </div>
           <div className="modal-body">
             <p style={{ color: "red" }}>{errorMessage}</p>

@@ -4,36 +4,39 @@ import apiCall from "../api/ApiCall";
 import { jwtDecode } from "jwt-decode";
 import { localVariable } from "@/data";
 import { AuthContext } from "../Context/AuthContext";
-
+import { Loader } from "../components/Loader";
+import { storeInLocalStorage } from "../Context/Actions";
 const LoginPage = () => {
   const { setUser, setAccessToken } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [responseErrorMessage, setResponseErrorMessage] = useState();
 
   const login = () => {
+    if (!email || !password)
+      return setResponseErrorMessage("Please provide both email and password");
+    setLoading(true);
     apiCall("POST", "user/login", { email, password })
       .then((response) => {
+        setLoading(false);
         if (response.data.access_token) {
           setAccessToken(response.data.access_token);
           const loggedUser = jwtDecode(response.data.access_token);
           setUser(loggedUser);
-          if (typeof window !== "undefined") {
-            localStorage.setItem(
-              localVariable.accessToken,
-              response.data.access_token
-            );
-            localStorage.setItem(
-              localVariable.user,
-              JSON.stringify(loggedUser)
-            );
-          }
+          storeInLocalStorage(
+            localVariable.accessToken,
+            response.data.access_token
+          );
+          storeInLocalStorage(localVariable.user, JSON.stringify(loggedUser));
         } else setResponseErrorMessage(response.data.error);
       })
       .catch((error) => {
         console.log("Error", error);
+        setLoading(false);
       });
   };
+
   return (
     <section className="vh-100">
       <div className="container py-5 h-100">
@@ -51,6 +54,7 @@ const LoginPage = () => {
               <p style={{ color: "red" }}>{responseErrorMessage}</p>
               <div data-mdb-input-init className="form-outline mb-4">
                 <InputField
+                  type="email"
                   name="email"
                   label="Email"
                   onChange={(e) => setEmail(e.target.value)}
@@ -67,10 +71,11 @@ const LoginPage = () => {
               </div>
               <a href="#">Forgot password?</a>
               <button
+                disabled={loading}
                 className="btn btn-primary btn-lg btn-block w-100"
                 onClick={() => login()}
               >
-                Sign in
+                {loading ? <Loader /> : "Sign in"}
               </button>
             </div>
           </div>

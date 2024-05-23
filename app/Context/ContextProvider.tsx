@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { localVariable } from "@/data";
+import { getFromLocalStorage } from "./Actions";
 
 function ContextProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState(null);
@@ -9,17 +10,13 @@ function ContextProvider({ children }: { children: React.ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem(localVariable.user);
-      const storedAccessToken = localStorage.getItem(localVariable.accessToken);
-
-      if (storedUser && storedAccessToken) {
-        setUser(JSON.parse(storedUser));
-        setAccessToken(storedAccessToken);
-      }
-
-      setIsInitialized(true);
+    const storedUser = getFromLocalStorage(localVariable.user);
+    const storedAccessToken = getFromLocalStorage(localVariable.accessToken);
+    if (storedUser && storedAccessToken) {
+      setUser(JSON.parse(storedUser));
+      setAccessToken(storedAccessToken);
     }
+    setIsInitialized(true);
   }, []);
 
   if (!isInitialized) {

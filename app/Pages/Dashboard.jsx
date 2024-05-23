@@ -5,9 +5,12 @@ import { Loader } from "../components/Loader";
 import { categoryOptions, localVariable, userRolesOptions } from "../../data";
 import { InputField, InputSelectField } from "../components/InputFields";
 import { AuthContext } from "../Context/AuthContext";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { Select, Table, message } from "antd";
+import { DataGrid, GridPagination, GridToolbar } from "@mui/x-data-grid";
+import { message } from "antd";
 import UserCreateForm from "../components/UserCreateForm";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Header from "../components/Header";
+import { Add, Edit } from "@mui/icons-material";
 const endpoint = "product";
 export default function Dashboard() {
   const authContext = useContext(AuthContext);
@@ -22,19 +25,26 @@ export default function Dashboard() {
       : []
   );
   const columns = [
-    { field: "sno", headerName: "#", width: 100, key: "1" },
-    { field: "id", headerName: "ID", width: 100, key: "2" },
-    { field: "title", headerName: "Title", width: 200, key: "3" },
-    { field: "price", headerName: "Price", width: 150, key: "4" },
-    { field: "category", headerName: "Category", width: 150, key: "5" },
+    { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
+    { field: "id", headerName: "ID", width: 100, key: "2", flex: 1 },
+    { field: "title", headerName: "Title", width: 200, key: "3", flex: 2 },
+    { field: "price", headerName: "Price", width: 150, key: "4", flex: 1 },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 150,
+      key: "5",
+      flex: 1,
+    },
     authContext.user.role === userRolesOptions[0]
       ? {
           field: "action",
           headerName: "Action",
           width: 150,
           key: "6",
+          flex: 1,
           renderCell: (params) => (
-            <div className="d-flex">
+            <div className="d-flex h-100 align-items-center">
               <a
                 onClick={() => {
                   setFormData({
@@ -46,20 +56,10 @@ export default function Dashboard() {
                   setShowModal(true);
                 }}
               >
-                <img
-                  src="assets/images/pencil.png"
-                  alt="Edit"
-                  width={30}
-                  height={30}
-                />
+                <Edit style={{ color: "green" }} />
               </a>
               <a onClick={() => deleteRecord(params.row.id)}>
-                <img
-                  src="assets/images/trash.png"
-                  alt="Delete"
-                  width={30}
-                  height={30}
-                />
+                <DeleteForeverIcon style={{ color: "red" }} />
               </a>
             </div>
           ),
@@ -99,13 +99,7 @@ export default function Dashboard() {
     price: 0,
     category: "",
   });
-  const logout = () => {
-    localStorage.removeItem(localVariable.accessToken);
-    localStorage.removeItem(localVariable.user);
-    authContext.setUser(null);
-    authContext.setAccessToken(null);
-    window.location.replace("/");
-  };
+
   const fetchData = () => {
     setLoading(true);
 
@@ -121,12 +115,19 @@ export default function Dashboard() {
   };
 
   const addRecord = () => {
+    setLoading(true);
     apiCall("POST", endpoint, formData)
       .then((result) => {
         fetchData();
         setShowModal(false);
+        setFormData({
+          title: "",
+          price: 0,
+          category: "",
+        });
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err.response.data.message);
         if (err.response.data.message === "Internal Server Error")
           message.error("Check your Internet connection");
@@ -164,6 +165,7 @@ export default function Dashboard() {
         })
         .catch((e) => console.log(e));
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -181,75 +183,78 @@ export default function Dashboard() {
     changeSettings(selectedKeys);
   };
 
-  const columns1 = [
-    { title: "#", dataIndex: "sno", key: "1" },
-    { title: "ID", dataIndex: "id", key: "2" },
-    { title: "Title", dataIndex: "title", key: "3" },
-    { title: "Price", dataIndex: "price", key: "4" },
-    { title: "Category", dataIndex: "category", key: "5" },
-    authContext.user.role === userRolesOptions[0]
-      ? { title: "Action", dataIndex: "action", key: "6" }
-      : {},
-  ];
+  // const columns1 = [
+  //   { title: "#", dataIndex: "sno", key: "1" },
+  //   { title: "ID", dataIndex: "id", key: "2" },
+  //   { title: "Title", dataIndex: "title", key: "3" },
+  //   { title: "Price", dataIndex: "price", key: "4" },
+  //   { title: "Category", dataIndex: "category", key: "5" },
+  //   authContext.user.role === userRolesOptions[0]
+  //     ? { title: "Action", dataIndex: "action", key: "6" }
+  //     : {},
+  // ];
 
-  const newColumns = columns1.map((item) => ({
-    ...item,
-    hidden: !checkedList.includes(item.key),
-  }));
+  // const newColumns = columns1.map((item) => ({
+  //   ...item,
+  //   hidden: !checkedList.includes(item.key),
+  // }));
+
+  const CustomPagination = () => {
+    const [pageSize, setPageSize] = useState(5);
+
+    const handlePageSizeChange = (event) => {
+      setPageSize(event.target.value);
+    };
+
+    return (
+      <GridPagination
+        rowsPerPageOptions={[2, 5, 10, 25]}
+        rowCount={data?.length || 0}
+        pageSize={pageSize}
+        pageSizeChange={handlePageSizeChange}
+      />
+    );
+  };
   return (
-    <div className="container">
-      <h1 style={{ textAlign: "center" }}>
-        CRUD Using Nestjs, Prisma and PostgreSQL
-      </h1>
-      {loading && <Loader />}
-      <>
-        <div className="d-flex justify-content-between">
-          <a
-            className="btn btn-success"
-            onClick={() => {
-              setShowModal(true);
-            }}
-          >
-            + Add
-          </a>
-          <div style={{ height: 38 }}>
-            <p>
-              <a href="/profile">
-                {authContext.user.name} ({authContext.user.role})
-              </a>
-              <button className="btn btn-dark" onClick={() => logout()}>
-                Logout
-              </button>
-              {authContext.user.role === userRolesOptions[0] && (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setShowUserModal(true)}
-                >
-                  Create User
-                </button>
-              )}
-            </p>
+    <>
+      <Header />
+      <div className="container mt-10">
+        {loading && <Loader />}
+        <>
+          <div className="d-flex justify-content-between">
+            <h4>Products</h4>
+            <a
+              className="btn btn-success"
+              onClick={() => {
+                setShowModal(true);
+              }}
+            >
+              <Add /> Add
+            </a>
           </div>
-        </div>
-        <h1>Material UI</h1>
-        <div style={{ width: "100%" }}>
-          <DataGrid
-            columns={columns}
-            rows={data.map((row, i) => ({
-              sno: i + 1,
-              id: row.id,
-              title: row.title,
-              price: row.price,
-              category: row.category,
-            }))}
-            slots={{
-              toolbar: GridToolbar,
-            }}
-            columnVisibilityModel={columnVisibility}
-            onColumnVisibilityModelChange={handleColumnVisibilityChange}
-          />
-        </div>
-        <h1>Antd</h1>
+
+          <div style={{ width: "100%" }}>
+            <DataGrid
+              columns={columns}
+              rows={data.map((row, i) => ({
+                sno: i + 1,
+                id: row.id,
+                title: row.title,
+                price: row.price,
+                category: row.category,
+              }))}
+              slots={{
+                toolbar: GridToolbar,
+                pagination: CustomPagination,
+              }}
+              onPaginationModelChange={(e) => console.log("____pagination", e)}
+              columnVisibilityModel={columnVisibility}
+              onColumnVisibilityModelChange={handleColumnVisibilityChange}
+              disableRowSelectionOnClick
+              disableColumnMenu
+            />
+          </div>
+          {/* <h1>Antd</h1>
         <Select
           mode="multiple"
           size="middle"
@@ -294,95 +299,102 @@ export default function Dashboard() {
             ),
           }))}
           style={{ marginTop: 24 }}
-        />
-      </>
+        /> */}
+        </>
 
-      {showModal && (
-        <div
-          className="modal"
-          tabIndex={-1}
-          role="dialog"
-          aria-hidden="true"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header flex justify-content-between">
-                <h5 className="modal-title">
-                  {updatingId ? "Update" : "Add new"} Record
-                </h5>
-              </div>
-              <div className="modal-body">
-                <InputField
-                  name="title"
-                  label="Title"
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      title: e.target.value,
-                    }));
-                  }}
-                />
+        {showModal && (
+          <div
+            className="modal"
+            tabIndex={-1}
+            role="dialog"
+            aria-hidden="true"
+            style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header flex justify-content-between">
+                  <h5 className="modal-title">
+                    {updatingId ? "Update" : "Add New"} Product Record
+                  </h5>
+                </div>
+                <div className="modal-body">
+                  <InputField
+                    name="title"
+                    label="Title"
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        title: e.target.value,
+                      }));
+                    }}
+                  />
 
-                <InputSelectField
-                  name="category"
-                  label="Category"
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      category: e.target.value,
-                    }))
-                  }
-                  options={categoryOptions}
-                />
+                  <InputSelectField
+                    name="category"
+                    label="Category"
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        category: e.target.value,
+                      }))
+                    }
+                    options={categoryOptions}
+                  />
 
-                <InputField
-                  name="price"
-                  label="Price"
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => {
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      price: Number(e.target.value),
-                    }));
-                  }}
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowModal(false);
-                    setUpdatingId(0);
-                    setFormData({
-                      title: "",
-                      price: 0,
-                      category: "",
-                    });
-                  }}
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() =>
-                    updatingId > 0 ? updateRecord() : addRecord()
-                  }
-                >
-                  {updatingId > 0 ? "Update" : "Add"}
-                </button>
+                  <InputField
+                    name="price"
+                    label="Price"
+                    type="number"
+                    value={formData.price}
+                    onChange={(e) => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        price: Number(e.target.value),
+                      }));
+                    }}
+                  />
+                </div>
+                {loading ? (
+                  <Loader />
+                ) : (
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setShowModal(false);
+                        setUpdatingId(0);
+                        setFormData({
+                          title: "",
+                          price: 0,
+                          category: "",
+                        });
+                      }}
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-success"
+                      onClick={() =>
+                        updatingId > 0 ? updateRecord() : addRecord()
+                      }
+                    >
+                      {updatingId > 0 ? "Update" : "Add"}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      )}
-      {showUserModal && <UserCreateForm setShowUserModal={setShowUserModal} />}
-    </div>
+        )}
+        {showUserModal && (
+          <UserCreateForm setShowUserModal={setShowUserModal} />
+        )}
+      </div>
+    </>
   );
 }

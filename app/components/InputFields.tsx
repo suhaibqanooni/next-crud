@@ -13,7 +13,7 @@ export const InputField = ({
   type,
 }: InputFieldProps) => {
   return (
-    <>
+    <div className="form-group">
       <label>{label}</label>
       <input
         className="form-control"
@@ -22,7 +22,7 @@ export const InputField = ({
         value={value}
         onChange={onChange}
       />
-    </>
+    </div>
   );
 };
 
