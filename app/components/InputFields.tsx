@@ -20,6 +20,7 @@ export const InputField = ({
         type={type || "text"}
         name={name}
         value={value}
+        placeholder={label}
         onChange={onChange}
       />
     </div>

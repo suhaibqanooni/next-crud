@@ -38,45 +38,133 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="vh-100">
-      <div className="container py-5 h-100">
-        <div className="row d-flex align-items-center justify-content-center h-100">
-          <div className="col-md-8 col-lg-7 col-xl-6">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-              className="img-fluid"
-              alt="Phone image"
-            />
-          </div>
-          <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-            <h1>Login Info</h1>
-            <div>
-              <p style={{ color: "red" }}>{responseErrorMessage}</p>
-              <div data-mdb-input-init className="form-outline mb-4">
-                <InputField
-                  type="email"
-                  name="email"
-                  label="Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+    // <section className="vh-100">
+    //   <div className="container py-5 h-100">
+    //     <div className="row d-flex align-items-center justify-content-center h-100">
+    //       <div className="col-md-8 col-lg-7 col-xl-6">
+    //         <img
+    //           src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+    //           className="img-fluid"
+    //           alt="Phone image"
+    //         />
+    //       </div>
+    //       <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+    //         <h1>Login Info</h1>
+    //         <div>
+    //           <p style={{ color: "red" }}>{responseErrorMessage}</p>
+    //           <div data-mdb-input-init className="form-outline mb-4">
+    //             <InputField
+    //               type="email"
+    //               name="email"
+    //               label="Email"
+    //               onChange={(e) => setEmail(e.target.value)}
+    //             />
+    //           </div>
 
-              <div data-mdb-input-init className="form-outline mb-4">
-                <InputField
-                  name="password"
-                  label="Password"
-                  type="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+    //           <div data-mdb-input-init className="form-outline mb-4">
+    //             <InputField
+    //               name="password"
+    //               label="Password"
+    //               type="password"
+    //               onChange={(e) => setPassword(e.target.value)}
+    //             />
+    //           </div>
+    //           <a href="#">Forgot password?</a>
+    //           <button
+    //             disabled={loading}
+    //             className="btn btn-primary btn-lg btn-block w-100"
+    //             onClick={() => login()}
+    //           >
+    //             {loading ? <Loader /> : "Sign in"}
+    //           </button>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </section>
+    <section class="vh-100 gradient-custom">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div className="col-md-8 col-lg-7 col-xl-6">
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/4/46/PGL_Logo.png"
+                width={200}
+                height={200}
+              />
+            </div>
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+              class="img-fluid"
+              alt="Sample image"
+            ></img>
+          </div>
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div
+              class="card bg-dark text-white"
+              style={{ borderRadius: "1rem" }}
+            >
+              <div class="card-body p-5 text-center">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                  <p class="text-white-50 mb-5">
+                    Please enter your login and password!
+                  </p>
+
+                  <p style={{ color: "red" }}>{responseErrorMessage}</p>
+                  <div data-mdb-input-init className="form-outline mb-4">
+                    <InputField
+                      type="email"
+                      name="email"
+                      label="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div data-mdb-input-init className="form-outline mb-4">
+                    <InputField
+                      name="password"
+                      label="Password"
+                      type="password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <p class="small mb-5 pb-lg-2">
+                    <a class="text-white-50" href="#!">
+                      Forgot password?
+                    </a>
+                  </p>
+
+                  <button
+                    disabled={loading}
+                    class="btn btn-outline-light btn-lg px-5"
+                    onClick={() => login()}
+                  >
+                    {loading ? <Loader /> : "Sign in"}
+                  </button>
+
+                  <div class="d-flex justify-content-center text-center mt-4 pt-1">
+                    <a href="#!" class="text-white">
+                      <i class="fab fa-facebook-f fa-lg"></i>
+                    </a>
+                    <a href="#!" class="text-white">
+                      <i class="fab fa-twitter fa-lg mx-4 px-2"></i>
+                    </a>
+                    <a href="#!" class="text-white">
+                      <i class="fab fa-google fa-lg"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <p class="mb-0">
+                    Don't have an account?{" "}
+                    <a href="#!" class="text-white-50 fw-bold">
+                      Sign Up
+                    </a>
+                  </p>
+                </div>
               </div>
-              <a href="#">Forgot password?</a>
-              <button
-                disabled={loading}
-                className="btn btn-primary btn-lg btn-block w-100"
-                onClick={() => login()}
-              >
-                {loading ? <Loader /> : "Sign in"}
-              </button>
             </div>
           </div>
         </div>

@@ -28,12 +28,15 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   const logout = () => {
     window.location.replace("/");
     removeFromLocalStorage(localVariable.accessToken);
     removeFromLocalStorage(localVariable.user);
-    authContext.setUser(null);
-    authContext.setAccessToken(null);
+    setTimeout(() => {
+      authContext.setUser(null);
+      authContext.setAccessToken(null);
+    }, 1000);
   };
   return (
     <>
