@@ -183,22 +183,6 @@ export default function Dashboard() {
     changeSettings(selectedKeys);
   };
 
-  // const columns1 = [
-  //   { title: "#", dataIndex: "sno", key: "1" },
-  //   { title: "ID", dataIndex: "id", key: "2" },
-  //   { title: "Title", dataIndex: "title", key: "3" },
-  //   { title: "Price", dataIndex: "price", key: "4" },
-  //   { title: "Category", dataIndex: "category", key: "5" },
-  //   authContext.user.role === userRolesOptions[0]
-  //     ? { title: "Action", dataIndex: "action", key: "6" }
-  //     : {},
-  // ];
-
-  // const newColumns = columns1.map((item) => ({
-  //   ...item,
-  //   hidden: !checkedList.includes(item.key),
-  // }));
-
   const CustomPagination = () => {
     const [pageSize, setPageSize] = useState(5);
 
@@ -219,7 +203,6 @@ export default function Dashboard() {
     <>
       <Header />
       <div className="container mt-10">
-        {loading && <Loader />}
         <>
           <div className="d-flex justify-content-between">
             <h4>Products</h4>
@@ -236,6 +219,8 @@ export default function Dashboard() {
           <div style={{ width: "100%" }}>
             <DataGrid
               columns={columns}
+              loading={loading}
+              autoHeight
               rows={data.map((row, i) => ({
                 sno: i + 1,
                 id: row.id,
@@ -254,52 +239,6 @@ export default function Dashboard() {
               disableColumnMenu
             />
           </div>
-          {/* <h1>Antd</h1>
-        <Select
-          mode="multiple"
-          size="middle"
-          placeholder="Select the Columns"
-          defaultValue={checkedList}
-          onChange={(e) => {
-            changeSettings(e);
-          }}
-          style={{ width: "100%" }}
-          options={columns1.map((op) => ({ label: op.title, value: op.key }))}
-          filterOption={(input, option) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        />
-        <Table
-          columns={newColumns}
-          dataSource={data.map((item, i) => ({
-            sno: i + 1,
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            category: item.category,
-            action: (
-              <>
-                <button
-                  onClick={() => {
-                    setFormData({
-                      title: item.title,
-                      price: item.price,
-                      category: item.category,
-                    });
-                    setUpdatingId(item.id);
-                    setShowModal(true);
-                  }}
-                >
-                  <img src="assets/images/pencil.png" width={30} height={30} />
-                </button>
-                <button onClick={() => deleteRecord(item.id)}>
-                  <img src="assets/images/trash.png" width={30} height={30} />
-                </button>
-              </>
-            ),
-          }))}
-          style={{ marginTop: 24 }}
-        /> */}
         </>
 
         {showModal && (

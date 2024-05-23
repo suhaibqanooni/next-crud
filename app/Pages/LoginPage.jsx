@@ -38,50 +38,6 @@ const LoginPage = () => {
   };
 
   return (
-    // <section className="vh-100">
-    //   <div className="container py-5 h-100">
-    //     <div className="row d-flex align-items-center justify-content-center h-100">
-    //       <div className="col-md-8 col-lg-7 col-xl-6">
-    //         <img
-    //           src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-    //           className="img-fluid"
-    //           alt="Phone image"
-    //         />
-    //       </div>
-    //       <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-    //         <h1>Login Info</h1>
-    //         <div>
-    //           <p style={{ color: "red" }}>{responseErrorMessage}</p>
-    //           <div data-mdb-input-init className="form-outline mb-4">
-    //             <InputField
-    //               type="email"
-    //               name="email"
-    //               label="Email"
-    //               onChange={(e) => setEmail(e.target.value)}
-    //             />
-    //           </div>
-
-    //           <div data-mdb-input-init className="form-outline mb-4">
-    //             <InputField
-    //               name="password"
-    //               label="Password"
-    //               type="password"
-    //               onChange={(e) => setPassword(e.target.value)}
-    //             />
-    //           </div>
-    //           <a href="#">Forgot password?</a>
-    //           <button
-    //             disabled={loading}
-    //             className="btn btn-primary btn-lg btn-block w-100"
-    //             onClick={() => login()}
-    //           >
-    //             {loading ? <Loader /> : "Sign in"}
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </section>
     <section class="vh-100 gradient-custom">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">

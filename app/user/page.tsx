@@ -52,28 +52,24 @@ export default function Page() {
     <>
       <Header />
       <div className="container mt-10">
-        {loading && <Loader />}
         <>
-          <div className="d-flex justify-content-between">
-            <h4>Users</h4>
-          </div>
-
-          <div style={{ width: "100%" }}>
-            <DataGrid
-              columns={columns}
-              rows={data.map((row: any, i) => ({
-                sno: i + 1,
-                id: row.id,
-                name: row.name,
-                email: row.email,
-                role: row.role,
-              }))}
-              slots={{
-                toolbar: GridToolbar,
-              }}
-              onPaginationModelChange={(e) => console.log("____pagination", e)}
-            />
-          </div>
+          <h4>Users</h4>
+          <DataGrid
+            columns={columns}
+            loading={loading}
+            rows={data.map((row: any, i) => ({
+              sno: i + 1,
+              id: row.id,
+              name: row.name,
+              email: row.email,
+              role: row.role,
+            }))}
+            autoHeight
+            slots={{
+              toolbar: GridToolbar,
+            }}
+            onPaginationModelChange={(e) => console.log("____pagination", e)}
+          />
         </>
       </div>
     </>
