@@ -182,22 +182,7 @@ export default function Page() {
   if (!authContext.user) {
     return null;
   }
-  const CustomPagination = () => {
-    const [pageSize, setPageSize] = useState(2);
 
-    const handlePageSizeChange = (event: any) => {
-      setPageSize(event.target.value);
-    };
-
-    return (
-      <GridPagination
-        rowsPerPageOptions={[2, 5, 10, 25]}
-        rowCount={data?.length}
-        pageSize={pageSize}
-        pageSizeChange={handlePageSizeChange}
-      />
-    );
-  };
   return (
     <>
       <Header />
@@ -243,7 +228,6 @@ export default function Page() {
             autoHeight
             slots={{
               toolbar: GridToolbar,
-              pagination: CustomPagination,
             }}
             onPaginationModelChange={(e) => console.log("____pagination", e)}
           />
