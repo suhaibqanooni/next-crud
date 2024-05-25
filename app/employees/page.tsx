@@ -84,9 +84,11 @@ export default function Page() {
                     email: params.row.email,
                     position: params.row.position,
                     dob: params.row.dob,
-                    productId: products?.find(
-                      (op: any) => op.label === params.row.productId
-                    )?.value,
+                    productId: Number(
+                      (products as { value: string; label: string }[])?.find(
+                        (op: any) => op.label === params.row.productId
+                      )?.value
+                    ),
                   });
                   setUpdatingId(params.row.id);
                   setShowModal(true);
