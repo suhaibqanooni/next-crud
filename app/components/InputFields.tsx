@@ -79,7 +79,7 @@ export const InputSelectField = ({
         onChange={onChange}
       >
         <option value="">Select Category</option>
-        {options.map((op, i) => (
+        {options.map((op: any, i) => (
           <option value={op.value} key={i + 1}>
             {op.label}
           </option>
