@@ -1,5 +1,13 @@
-export const categoryOptions = ["LAPTOPS", "PRINTERS", "OTHER"];
-export const userRolesOptions = ["ADMIN", "USER", "LOCAL"];
+export const categoryOptions = [
+  { value: "LAPTOPS", label: "LAPTOPS" },
+  { value: "PRINTERS", label: "PRINTERS" },
+  { value: "OTHER", label: "OTHER" },
+];
+export const userRolesOptions = [
+  { value: "ADMIN", label: "ADMIN" },
+  { value: "USER", label: "USER" },
+  { value: "LOCAL", label: "LOCAL" },
+];
 
 export const localVariable = {
   user: "user",

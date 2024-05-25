@@ -1,3 +1,5 @@
+import { userRolesOptions } from "@/data";
+
 export const storeInLocalStorage = (key, value) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(key, value);
@@ -12,4 +14,7 @@ export const removeFromLocalStorage = (key) => {
   if (typeof window !== "undefined") {
     localStorage.removeItem(key);
   }
+};
+export const adminPermission = (role) => {
+  return role === "ADMIN";
 };

@@ -11,6 +11,7 @@ import UserCreateForm from "../components/UserCreateForm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Header from "../components/Header";
 import { Add, Edit } from "@mui/icons-material";
+import { adminPermission } from "../Context/Actions";
 const endpoint = "product";
 export default function Dashboard() {
   const authContext = useContext(AuthContext);
@@ -36,7 +37,7 @@ export default function Dashboard() {
       key: "5",
       flex: 1,
     },
-    authContext.user.role === userRolesOptions[0]
+    adminPermission(authContext?.user?.role)
       ? {
           field: "action",
           headerName: "Action",
@@ -225,7 +226,7 @@ export default function Dashboard() {
                 sno: i + 1,
                 id: row.id,
                 title: row.title,
-                price: row.price,
+                price: `$ ${row.price.toFixed(2)}`,
                 category: row.category,
               }))}
               slots={{

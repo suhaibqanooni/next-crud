@@ -9,8 +9,8 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { removeFromLocalStorage } from "../Context/Actions";
-import { localVariable, userRolesOptions } from "@/data";
+import { adminPermission, removeFromLocalStorage } from "../Context/Actions";
+import { localVariable } from "@/data";
 import { AuthContext } from "../Context/AuthContext";
 import Link from "next/link";
 import { Add, List, Logout, Person } from "@mui/icons-material";
@@ -38,6 +38,7 @@ function Header() {
       authContext.setAccessToken(null);
     }, 1000);
   };
+
   return (
     <>
       <AppBar position="static">
@@ -61,15 +62,33 @@ function Header() {
               PGL
             </Typography>
 
-            <Box
-              sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
-            ></Box>
-
+            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Link
+                href="/user"
+                style={{
+                  marginRight: 15,
+                  textDecoration: "none",
+                  color: "white",
+                  display: "block",
+                }}
+              >
+                Users
+              </Link>
+              <Link
+                href="/employees"
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  display: "block",
+                }}
+              >
+                Employees
+              </Link>
+            </Box>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open menu">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar src="assets/user.png" alt="PGL" />
-                  {/* <img src="assets/user.png" alt="PGL" /> */}
                 </IconButton>
               </Tooltip>
               <Menu
@@ -113,7 +132,7 @@ function Header() {
                     <List style={{ color: "blue" }} /> Users List
                   </Link>
                 </MenuItem>
-                {authContext?.user?.role === userRolesOptions[0] && (
+                {adminPermission(authContext?.user?.role) && (
                   <MenuItem
                     onClick={() => {
                       setShowUserModal(true);

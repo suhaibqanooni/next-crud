@@ -34,6 +34,33 @@ interface InputSelectFieldProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   options: string[];
 }
+// export const InputSelectField = ({
+//   label,
+//   name,
+//   value,
+//   onChange,
+//   options,
+// }: InputSelectFieldProps) => {
+//   return (
+//     <>
+//       <label>{label}</label>
+
+//       <select
+//         className="form-control"
+//         name={name}
+//         value={value}
+//         onChange={onChange}
+//       >
+//         <option value="">Select Category</option>
+//         {options.map((op, i) => (
+//           <option value={op} key={i + 1}>
+//             {op}
+//           </option>
+//         ))}
+//       </select>
+//     </>
+//   );
+// };
 export const InputSelectField = ({
   label,
   name,
@@ -53,8 +80,8 @@ export const InputSelectField = ({
       >
         <option value="">Select Category</option>
         {options.map((op, i) => (
-          <option value={op} key={i + 1}>
-            {op}
+          <option value={op.value} key={i + 1}>
+            {op.label}
           </option>
         ))}
       </select>
