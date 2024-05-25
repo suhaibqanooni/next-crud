@@ -6,8 +6,7 @@ import { AuthContext } from "../Context/AuthContext";
 import { DataGrid, GridPagination, GridToolbar } from "@mui/x-data-grid";
 import Header from "../components/Header";
 import useAuthorization from "../Hooks/useAuthorization";
-import { userRolesOptions } from "@/data";
-import { Add, DetailsOutlined, Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { message } from "antd";
 import { InputField, InputSelectField } from "../components/InputFields";
@@ -191,7 +190,7 @@ export default function Page() {
     return (
       <GridPagination
         rowsPerPageOptions={[2, 5, 10, 25]}
-        rowCount={data?.length || 0}
+        rowCount={data?.length}
         pageSize={pageSize}
         pageSizeChange={handlePageSizeChange}
       />
@@ -216,7 +215,16 @@ export default function Page() {
             )}
           </div>
           <DataGrid
-            columns={columns}
+            columns={
+              columns as {
+                field: string;
+                headerName: string;
+                width: number;
+                key: string;
+                flex: number;
+                renderCell?: undefined;
+              }[]
+            }
             loading={loading}
             rows={data.map((row: any, i) => ({
               sno: i + 1,
@@ -225,8 +233,10 @@ export default function Page() {
               email: row.email,
               position: row.position,
               dob: row.dob,
-              productId: products?.find((op: any) => op.value === row.productId)
-                ?.label,
+              productId:
+                (products as { value: string; label: string }[]).find(
+                  (op) => op.value === row.productId
+                )?.label || "",
             }))}
             autoHeight
             slots={{
@@ -305,14 +315,14 @@ export default function Page() {
                 <InputSelectField
                   name="productId"
                   label="Product Alloted"
-                  value={formData.productId}
+                  value={formData.productId.toString()}
                   onChange={(e) =>
                     setFormData((prevData) => ({
                       ...prevData,
                       productId: Number(e.target.value),
                     }))
                   }
-                  options={products}
+                  options={products as { value: string; label: string }[]}
                 />
               </div>
               {loading ? (
