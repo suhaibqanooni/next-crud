@@ -1,16 +1,17 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
-import apiCall from "../api/ApiCall";
+import apiCall, { baseURL } from "../api/ApiCall";
 import { Loader } from "../components/Loader";
 import { AuthContext } from "../Context/AuthContext";
-import { DataGrid, GridPagination, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Header from "../components/Header";
 import useAuthorization from "../Hooks/useAuthorization";
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Edit, Person } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { message } from "antd";
 import { InputField, InputSelectField } from "../components/InputFields";
 import { adminPermission } from "../Context/Actions";
+import axios from "axios";
 let endpoint = "employees";
 export default function Page() {
   const authContext = useContext(AuthContext);
@@ -19,12 +20,14 @@ export default function Page() {
   const [products, setProducts] = useState(Array);
   const [updatingId, setUpdatingId] = useState(Number);
   const [showModal, setShowModal] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     position: "",
     dob: "",
     productId: 0,
+    photo: "",
   });
   const fetchProducts = () => {
     setLoading(true);
@@ -44,21 +47,37 @@ export default function Page() {
   };
   const columns = [
     { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
-    { field: "id", headerName: "ID", width: 100, key: "2", flex: 1 },
-    { field: "name", headerName: "Name", width: 200, key: "3", flex: 2 },
-    { field: "email", headerName: "Email", width: 150, key: "4", flex: 3 },
+    {
+      field: "photo",
+      headerName: "Photo",
+      width: 150,
+      key: "2",
+      flex: 1,
+      renderCell: (params: any) =>
+        params.row.photo ? (
+          <img
+            src={baseURL + "/" + params.row.photo}
+            style={{ width: 40, height: 40, borderRadius: "40%" }}
+          />
+        ) : (
+          <Person />
+        ),
+    },
+    { field: "id", headerName: "ID", width: 100, key: "3", flex: 1 },
+    { field: "name", headerName: "Name", width: 200, key: "4", flex: 2 },
+    { field: "email", headerName: "Email", width: 150, key: "5", flex: 3 },
     {
       field: "position",
       headerName: "Position",
       width: 150,
-      key: "5",
+      key: "6",
       flex: 2,
     },
     {
       field: "dob",
       headerName: "Date of Birth",
       width: 150,
-      key: "6",
+      key: "7",
       flex: 2,
     },
     {
@@ -89,6 +108,7 @@ export default function Page() {
                         (op: any) => op.label === params.row.productId
                       )?.value
                     ),
+                    photo: params.row.photo,
                   });
                   setUpdatingId(params.row.id);
                   setShowModal(true);
@@ -127,10 +147,57 @@ export default function Page() {
         setLoading(false);
       });
   };
-  const addRecord = () => {
-    const data = { ...formData, addedById: authContext.user.id };
+  const onSubmit = () => {
+    if (file) {
+      const multipartUpload = new FormData();
+      multipartUpload.append("file", file);
+      axios
+        .post(`${baseURL}/${endpoint}/upload`, multipartUpload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          const filename = `${response.data.file.destination}/${response.data.file.filename}`;
+          let data = {
+            ...formData,
+            addedById: authContext.user.id,
+            photo: filename,
+          };
+          addRecord(data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log("File upload error", err);
+        });
+    } else {
+      let data = {
+        ...formData,
+        addedById: authContext.user.id,
+      };
+      addRecord(data);
+    }
+  };
+
+  const addRecord = (data: object) => {
+    let params = {
+      method: "POST",
+      endpoint,
+    };
+    if (updatingId) {
+      params.method = "PATCH";
+      params.endpoint = `${endpoint}/${updatingId}`;
+      apiCall("DELETE", `employees/file/${updatingId}`)
+        .then((res) => {
+          console.log("Deleted");
+        })
+        .catch((err) => {
+          console.log("Error");
+        });
+    }
     setLoading(true);
-    apiCall("POST", endpoint, data)
+    apiCall(params.method, params.endpoint, data)
       .then((result) => {
         fetchData();
         setShowModal(false);
@@ -140,10 +207,13 @@ export default function Page() {
           position: "",
           dob: "",
           productId: 0,
+          photo: "",
         });
+        setFile(null);
       })
       .catch((err) => {
         setLoading(false);
+        setFile(null);
         console.log(err.response.data.message);
         if (err.response.data.message === "Internal Server Error")
           message.error("Check your Internet connection");
@@ -151,28 +221,6 @@ export default function Page() {
       });
   };
 
-  const updateRecord = () => {
-    const data = { ...formData, addedById: authContext.user.id };
-    apiCall("PATCH", `${endpoint}/${updatingId}`, data)
-      .then((res) => {
-        fetchData();
-        message.success("Record updated successfully");
-      })
-      .catch((err) => {
-        message.error(err.response.data.message);
-      })
-      .finally(() => {
-        setUpdatingId(0);
-        setFormData({
-          name: "",
-          email: "",
-          position: "",
-          dob: "",
-          productId: 0,
-        });
-        setShowModal(false);
-      });
-  };
   useEffect(() => {
     fetchProducts();
     fetchData();
@@ -215,6 +263,7 @@ export default function Page() {
             loading={loading}
             rows={data.map((row: any, i) => ({
               sno: i + 1,
+              photo: row.photo,
               id: row.id,
               name: row.name,
               email: row.email,
@@ -247,6 +296,10 @@ export default function Page() {
                 <h5 className="modal-title">
                   {updatingId ? "Update" : "Add New"} Employee Record
                 </h5>
+                <img
+                  src={baseURL + "/" + formData.photo}
+                  style={{ width: 100, height: 100, borderRadius: "50%" }}
+                />
               </div>
               <div className="modal-body">
                 <InputField
@@ -310,6 +363,17 @@ export default function Page() {
                   }
                   options={products as { value: string; label: string }[]}
                 />
+                <InputField
+                  name="file"
+                  label="file"
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                      setFile(file);
+                    }
+                  }}
+                />
               </div>
               {loading ? (
                 <Loader />
@@ -327,6 +391,7 @@ export default function Page() {
                         position: "",
                         dob: "",
                         productId: 0,
+                        photo: "",
                       });
                     }}
                   >
@@ -335,9 +400,7 @@ export default function Page() {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={() =>
-                      updatingId > 0 ? updateRecord() : addRecord()
-                    }
+                    onClick={() => onSubmit()}
                   >
                     {updatingId > 0 ? "Update" : "Add"}
                   </button>

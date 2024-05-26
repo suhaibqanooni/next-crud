@@ -26,6 +26,9 @@ export const InputField = ({
     </div>
   );
 };
+InputField.defaultProps = {
+  value: "",
+};
 
 interface InputSelectFieldProps {
   label: string;
@@ -34,33 +37,7 @@ interface InputSelectFieldProps {
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   options: object[];
 }
-// export const InputSelectField = ({
-//   label,
-//   name,
-//   value,
-//   onChange,
-//   options,
-// }: InputSelectFieldProps) => {
-//   return (
-//     <>
-//       <label>{label}</label>
 
-//       <select
-//         className="form-control"
-//         name={name}
-//         value={value}
-//         onChange={onChange}
-//       >
-//         <option value="">Select Category</option>
-//         {options.map((op, i) => (
-//           <option value={op} key={i + 1}>
-//             {op}
-//           </option>
-//         ))}
-//       </select>
-//     </>
-//   );
-// };
 export const InputSelectField = ({
   label,
   name,
