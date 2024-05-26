@@ -87,7 +87,7 @@ export default function Page() {
       flex: 2,
     },
 
-    adminPermission(authContext.user.role)
+    adminPermission(authContext?.user?.role)
       ? {
           field: "action",
           headerName: "Action",
@@ -298,10 +298,12 @@ export default function Page() {
                 <h5 className="modal-title">
                   {updatingId ? "Update" : "Add New"} Employee Record
                 </h5>
-                <img
-                  src={baseURL + "/" + formData.photo}
-                  style={{ width: 100, height: 100, borderRadius: "50%" }}
-                />
+                {updatingId && formData.photo ? (
+                  <img
+                    src={baseURL + "/" + formData.photo}
+                    style={{ width: 100, height: 100, borderRadius: "50%" }}
+                  />
+                ) : null}
               </div>
               <div className="modal-body">
                 <InputField

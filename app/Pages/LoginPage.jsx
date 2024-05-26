@@ -72,6 +72,7 @@ const LoginPage = () => {
                     <InputField
                       type="email"
                       name="email"
+                      value={email}
                       label="Email"
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -81,6 +82,7 @@ const LoginPage = () => {
                     <InputField
                       name="password"
                       label="Password"
+                      value={password}
                       type="password"
                       onChange={(e) => setPassword(e.target.value)}
                     />
