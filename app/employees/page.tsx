@@ -200,6 +200,7 @@ export default function Page() {
     apiCall(params.method, params.endpoint, data)
       .then((result) => {
         fetchData();
+        setUpdatingId(0);
         setShowModal(false);
         setFormData({
           name: "",
@@ -213,6 +214,7 @@ export default function Page() {
       })
       .catch((err) => {
         setLoading(false);
+        setUpdatingId(0);
         setFile(null);
         console.log(err.response.data.message);
         if (err.response.data.message === "Internal Server Error")
