@@ -26,14 +26,19 @@ export default function Dashboard() {
       : []
   );
   const columns = [
-    { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
-    { field: "id", headerName: "ID", width: 100, key: "2", flex: 1 },
-    { field: "title", headerName: "Title", width: 200, key: "3", flex: 2 },
-    { field: "price", headerName: "Price", width: 150, key: "4", flex: 1 },
+    { field: "sno", headerName: "#", key: "1", flex: 1 },
+    { field: "id", headerName: "ID", key: "2", flex: 1 },
+    { field: "title", headerName: "Title", key: "3", flex: 2 },
+    {
+      field: "price",
+      headerName: "Price",
+      key: "4",
+      flex: 1,
+      renderCell: (params) => `$ ${params.row.price?.toFixed(2)}`,
+    },
     {
       field: "category",
       headerName: "Category",
-      width: 150,
       key: "5",
       flex: 1,
     },
@@ -41,7 +46,6 @@ export default function Dashboard() {
       ? {
           field: "action",
           headerName: "Action",
-          width: 150,
           key: "6",
           flex: 1,
           renderCell: (params) => (
@@ -226,7 +230,7 @@ export default function Dashboard() {
                 sno: i + 1,
                 id: row.id,
                 title: row.title,
-                price: `$ ${row.price.toFixed(2)}`,
+                price: row.price,
                 category: row.category,
               }))}
               slots={{
