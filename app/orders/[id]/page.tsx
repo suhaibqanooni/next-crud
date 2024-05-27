@@ -9,8 +9,10 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  CircularProgress,
   Typography,
 } from "@mui/material";
+import { Loader } from "@/app/components/Loader";
 
 let endpoint = "orders";
 const dataInterface = {
@@ -57,7 +59,9 @@ export default function Page({ params }: any) {
     return null;
   }
 
-  return data.name ? (
+  return loading ? (
+    <Loader />
+  ) : data.name ? (
     <>
       <Header />
       <div className="container mt-10">
