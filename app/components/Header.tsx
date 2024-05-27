@@ -77,12 +77,23 @@ function Header() {
               <Link
                 href="/employees"
                 style={{
+                  marginRight: 15,
                   color: "white",
                   textDecoration: "none",
                   display: "block",
                 }}
               >
                 Employees
+              </Link>
+              <Link
+                href="/orders"
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  display: "block",
+                }}
+              >
+                Orders
               </Link>
             </Box>
             <Box sx={{ flexGrow: 0 }}>
