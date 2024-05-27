@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import Link from "next/link";
 let endpoint = "orders";
 
 export default function Page() {
@@ -200,50 +201,19 @@ export default function Page() {
 
   const columns = [
     { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
-    { field: "name", headerName: "Name", width: 200, key: "4", flex: 2 },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 200,
+      key: "4",
+      flex: 2,
+      renderCell: (params: any) => (
+        <Link href={`orders/${params.row.id}`}>{params.row?.name}</Link>
+      ),
+    },
     { field: "phone", headerName: "phone", key: "5", flex: 2 },
     { field: "address", headerName: "Address", key: "5", flex: 2 },
-    {
-      field: "qad",
-      headerName: "Qad",
-      key: "6",
-      flex: 1,
-    },
-    {
-      field: "width",
-      headerName: "Width",
-      key: "7",
-      flex: 1,
-    },
-    {
-      field: "arm",
-      headerName: "Arm",
-      flex: 1,
-    },
-    { field: "cuff", headerName: "Cuff", key: "5", flex: 1 },
-    { field: "chest", headerName: "Chest", key: "5", flex: 1 },
-    { field: "daman", headerName: "Daman", key: "5", flex: 1 },
-    { field: "collar", headerName: "Collar", key: "5", flex: 1 },
-    { field: "pant", headerName: "Pant", key: "5", flex: 1 },
-    {
-      field: "pantCuff",
-      headerName: "PantCuff",
-      key: "5",
-      flex: 1,
-    },
-    {
-      field: "frontPocket",
-      headerName: "Front Pocket",
-      key: "5",
-      flex: 1,
-    },
-    {
-      field: "collarType",
-      headerName: "CollarType",
-      key: "5",
-      flex: 1,
-    },
-    { field: "order", headerName: "Order", key: "5", flex: 3 },
+
     adminPermission(authContext?.user?.role)
       ? {
           field: "action",
