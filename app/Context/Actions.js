@@ -1,5 +1,3 @@
-import { userRolesOptions } from "@/data";
-
 export const storeInLocalStorage = (key, value) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(key, value);

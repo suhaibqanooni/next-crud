@@ -1,3 +1,24 @@
+export const personalInformation = {
+  name: "GM",
+  email: "gm@gmail.com",
+};
+export const headerTabs = [
+  {
+    label: "Users",
+    link: "/user",
+    permissions: ["ADMIN"],
+  },
+  {
+    label: "Employees",
+    link: "/employees",
+    permissions: ["ADMIN"],
+  },
+  {
+    label: "Orders",
+    link: "/orders",
+    permissions: ["ADMIN"],
+  },
+];
 export const categoryOptions = [
   { value: "LAPTOPS", label: "LAPTOPS" },
   { value: "PRINTERS", label: "PRINTERS" },

@@ -1,23 +1,18 @@
+import { Result } from "antd";
 import React from "react";
 
 export const UnAuthorized = () => {
   return (
-    <div className="text-center">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src="https://img.freepik.com/free-vector/401-error-unauthorized-concept-illustration_114360-1934.jpg"
-          width={400}
-          height={400}
-        />
-      </div>
-      <h1>401 unauthorized</h1>
-      <h3>You have no access to this page</h3>
-    </div>
+    <Result
+      status="403"
+      title="403"
+      subTitle="Sorry, you are not authorized to access this page."
+      extra={
+        <a className="btn btn-dark" href="/">
+          GO BACK
+        </a>
+      }
+    />
   );
 };
 

@@ -1,6 +1,6 @@
 import axios from "axios";
-// export const baseURL = "http://localhost:8000";
-export const baseURL = "https://nest-crud-2e5o.onrender.com";
+export const baseURL = "http://localhost:8000";
+// export const baseURL = "https://nest-crud-2e5o.onrender.com";
 
 const apiCall = async (method, endpoint, data) => {
   let user = {};

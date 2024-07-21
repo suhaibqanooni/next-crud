@@ -10,7 +10,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { adminPermission, removeFromLocalStorage } from "../Context/Actions";
-import { localVariable } from "@/data";
+import { headerTabs, localVariable, personalInformation } from "@/data";
 import { AuthContext } from "../Context/AuthContext";
 import Link from "next/link";
 import { Add, List, Logout, Person } from "@mui/icons-material";
@@ -44,6 +44,9 @@ function Header() {
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
+            <Link href="/">
+              <img src="/assets/logo.png" width={100} />
+            </Link>
             <Typography
               variant="h6"
               noWrap
@@ -59,42 +62,28 @@ function Header() {
                 textDecoration: "none",
               }}
             >
-              PGL
+              {personalInformation.name}
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              <Link
-                href="/user"
-                style={{
-                  marginRight: 15,
-                  textDecoration: "none",
-                  color: "white",
-                  display: "block",
-                }}
-              >
-                Users
-              </Link>
-              <Link
-                href="/employees"
-                style={{
-                  marginRight: 15,
-                  color: "white",
-                  textDecoration: "none",
-                  display: "block",
-                }}
-              >
-                Employees
-              </Link>
-              <Link
-                href="/orders"
-                style={{
-                  color: "white",
-                  textDecoration: "none",
-                  display: "block",
-                }}
-              >
-                Orders
-              </Link>
+              {headerTabs.map((tab) =>
+                adminPermission(authContext?.user?.role) ||
+                tab.permissions.some(
+                  (perm) => perm === authContext?.user?.role
+                ) ? (
+                  <Link
+                    href={tab.link}
+                    style={{
+                      marginRight: 15,
+                      textDecoration: "none",
+                      color: "white",
+                      display: "block",
+                    }}
+                  >
+                    {tab.label}
+                  </Link>
+                ) : null
+              )}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open menu">

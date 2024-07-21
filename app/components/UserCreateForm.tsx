@@ -99,7 +99,7 @@ function UserCreateForm({ setShowUserModal }: UserCreateFormProps) {
             <InputField
               name="password"
               label="Password"
-              type="text"
+              type="password"
               value={formData.password}
               onChange={(e) => {
                 setFormData((prevData) => ({

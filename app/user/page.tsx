@@ -1,11 +1,13 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import apiCall from "../api/ApiCall";
-import { Loader } from "../components/Loader";
 import { AuthContext } from "../Context/AuthContext";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Header from "../components/Header";
 import useAuthorization from "../Hooks/useAuthorization";
+import { Table } from "antd";
+import { adminPermission } from "../Context/Actions";
+import UnAuthorized from "../components/UnAuthorized";
+const permittedTo = "ADMIN";
 const endpoint = "user";
 export default function Page() {
   const authContext = useContext(AuthContext);
@@ -13,13 +15,13 @@ export default function Page() {
   const [data, setData] = useState(Array);
 
   const columns = [
-    { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
-    { field: "id", headerName: "ID", width: 100, key: "2", flex: 1 },
-    { field: "name", headerName: "Name", width: 200, key: "3", flex: 2 },
-    { field: "email", headerName: "Email", width: 150, key: "4", flex: 3 },
+    { dataIndex: "sno", title: "#", width: 100, key: "1", flex: 1 },
+    { dataIndex: "id", title: "ID", width: 100, key: "2", flex: 1 },
+    { dataIndex: "name", title: "Name", width: 200, key: "3", flex: 2 },
+    { dataIndex: "email", title: "Email", width: 150, key: "4", flex: 3 },
     {
-      field: "role",
-      headerName: "Role",
+      dataIndex: "role",
+      title: "Role",
       width: 150,
       key: "5",
       flex: 2,
@@ -48,30 +50,28 @@ export default function Page() {
   if (!authContext.user) {
     return null;
   }
-  return (
+  return adminPermission(authContext.user?.role) ||
+    authContext.user?.role === permittedTo ? (
     <>
       <Header />
       <div className="container mt-10">
         <>
           <h4>Users</h4>
-          <DataGrid
+          <Table
             columns={columns}
             loading={loading}
-            rows={data.map((row: any, i) => ({
+            dataSource={data?.map((row: any, i) => ({
               sno: i + 1,
               id: row.id,
               name: row.name,
               email: row.email,
               role: row.role,
             }))}
-            autoHeight
-            slots={{
-              toolbar: GridToolbar,
-            }}
-            onPaginationModelChange={(e) => console.log("____pagination", e)}
           />
         </>
       </div>
     </>
+  ) : (
+    <UnAuthorized />
   );
 }

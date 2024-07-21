@@ -2,25 +2,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import apiCall from "../api/ApiCall";
 import { AuthContext } from "../Context/AuthContext";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Header from "../components/Header";
 import useAuthorization from "../Hooks/useAuthorization";
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Edit, Loop, Search } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { message } from "antd";
+import { message, Popconfirm, Table } from "antd";
 import { adminPermission } from "../Context/Actions";
-import {
-  Box,
-  Button,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from "@mui/material";
+import { Step, StepLabel, Stepper } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import Link from "next/link";
+import UnAuthorized from "../components/UnAuthorized";
 let endpoint = "orders";
-
+const permittedTo = "ADMIN";
 export default function Page() {
   const authContext = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
@@ -48,12 +41,13 @@ export default function Page() {
     useState<Record<string, string | number>>(dataInterface);
 
   const [activeStep, setActiveStep] = useState(0);
+  const [search, setSearch] = useState("");
   const [skipped, setSkipped] = useState(new Set<number>());
 
   const steps = [
     {
       key: 1,
-      title: "Personal Information",
+      title: "Customer Information",
       fields: [
         { type: "text", name: "name", id: "name", label: "Name" },
         { type: "text", name: "phone", id: "phone", label: "Phone" },
@@ -62,7 +56,7 @@ export default function Page() {
     },
     {
       key: 2,
-      title: "Order Step 1",
+      title: "General Order",
       fields: [
         { type: "number", name: "qad", id: "qad", label: "Qad" },
         { type: "number", name: "width", id: "width", label: "width" },
@@ -82,49 +76,43 @@ export default function Page() {
     },
     {
       key: 3,
-      title: "Order Step 2",
+      title: "Special Order",
       fields: [
         {
           type: "radio",
           name: "collarType",
           id: "full",
           value: "full",
-          label:
-            "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+          label: "assets/order/color1.png",
         },
         {
           type: "radio",
           name: "collarType",
           id: "single",
           value: "single",
-          label:
-            "https://thumbs.dreamstime.com/b/cameleon-tropical-color-70021439.jpg",
+          label: "assets/order/color3.png",
         },
         {
           type: "radio",
           name: "collarType",
           id: "singleRound",
           value: "singleRound",
-          label:
-            "https://thumbs.dreamstime.com/b/cameleon-tropical-color-70021439.jpg",
+          label: "assets/order/color2.png",
         },
         {
           type: "radio",
           name: "frontPocket",
           id: "yes",
           value: "yes",
-          label:
-            "https://thumbs.dreamstime.com/b/multicolored-exotic-cameleon-branch-multicolored-exotic-cameleon-branch-rainforest-141562363.jpg",
+          label: "assets/order/frontPocket1.png",
         },
         {
           type: "radio",
           name: "frontPocket",
           id: "no",
           value: "no",
-          label:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZ_mMuQgtbE8IaREJiID0xY2GcIT6ky_VFz0IM9lTY-GgcB2MpX8i-P27WjMo56qX4ayM&usqp=CAU",
+          label: "No Front Pocket",
         },
-        // { type: "text", name: "order", label: "Order" },
       ],
     },
     {
@@ -139,6 +127,8 @@ export default function Page() {
   };
 
   const handleNext = () => {
+    if (!formData.name || !formData.phone)
+      return message.error("Please Enter Name and Phone Number");
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -166,7 +156,6 @@ export default function Page() {
   };
 
   const handleSubmit = () => {
-    console.log("Form Data:", formData);
     let params = {
       method: "POST",
       endpoint,
@@ -188,6 +177,8 @@ export default function Page() {
         setShowModal(false);
         setFormData(dataInterface);
         setActiveStep(0);
+        setLoading(false);
+        message.success("Data Saved Successfully");
       })
       .catch((err) => {
         setLoading(false);
@@ -199,57 +190,13 @@ export default function Page() {
       });
   };
 
-  const columns = [
-    { field: "sno", headerName: "#", width: 100, key: "1", flex: 1 },
-    {
-      field: "name",
-      headerName: "Name",
-      width: 200,
-      key: "4",
-      flex: 2,
-      renderCell: (params: any) => (
-        <Link href={`orders/${params.row.id}`}>{params.row?.name}</Link>
-      ),
-    },
-    { field: "phone", headerName: "phone", key: "5", flex: 2 },
-    { field: "address", headerName: "Address", key: "5", flex: 2 },
-
-    adminPermission(authContext?.user?.role)
-      ? {
-          field: "action",
-          headerName: "Action",
-
-          key: "9",
-          flex: 1,
-          renderCell: (params: any) => (
-            <div className="d-flex h-100 align-items-center">
-              <a
-                onClick={() => {
-                  const { sno, id, ...rest } = params.row;
-                  setFormData(rest);
-                  setUpdatingId(params.row.id);
-                  setShowModal(true);
-                }}
-              >
-                <Edit style={{ color: "green" }} />
-              </a>
-              <a onClick={() => deleteRecord(params.row.id)}>
-                <DeleteForeverIcon style={{ color: "red" }} />
-              </a>
-            </div>
-          ),
-        }
-      : {},
-  ];
   const deleteRecord = (id: any) => {
     setLoading(true);
-    if (confirm("You are deleting this record. press ok to confirm!") == true) {
-      apiCall("DELETE", endpoint + "/" + id)
-        .then((res) => {
-          fetchData();
-        })
-        .catch((e) => console.log(e));
-    }
+    apiCall("DELETE", endpoint + "/" + id)
+      .then((res) => {
+        fetchData();
+      })
+      .catch((e) => console.log(e));
     setLoading(false);
   };
   const fetchData = () => {
@@ -273,14 +220,100 @@ export default function Page() {
   if (!authContext.user) {
     return null;
   }
-
-  return (
+  const columns = [
+    {
+      title: "Sno",
+      dataIndex: "sno",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      render: (_: any, row: any) => (
+        <Link href={`orders/${row.id}`}>{row?.name}</Link>
+      ),
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (_: any, row: any) => (
+        <div className="d-flex h-100 align-items-center">
+          <a
+            onClick={() => {
+              const { sno, id, ...rest } = row;
+              setFormData(rest);
+              setUpdatingId(row.id);
+              setShowModal(true);
+            }}
+          >
+            <Edit style={{ color: "green" }} />
+          </a>
+          <Popconfirm
+            title="Delete the order"
+            description="Are you sure to delete this order?"
+            onConfirm={() => deleteRecord(row.id)}
+            onCancel={() => console.log("Cancelled")}
+            okText="Yes"
+            okType="danger"
+            cancelText="No"
+          >
+            <DeleteForeverIcon style={{ color: "red" }} />
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+  const filterData = () => {
+    const filterData = data?.filter(
+      (op: any) =>
+        op.name?.toLowerCase().includes(search.toLowerCase()) ||
+        op.phone?.toLowerCase().includes(search.toLowerCase())
+    );
+    setData(filterData);
+  };
+  return adminPermission(authContext.user?.role) ||
+    authContext.user?.role === permittedTo ? (
     <>
       <Header />
-      <div className="container mt-10">
+      <div className="container mt-10 mb-30">
         <>
           <div className="d-flex justify-content-between">
             <h4>Orders</h4>
+            <div className="input-group w-50">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <div className="input-group-append">
+                <button
+                  className="btn btn-warning"
+                  type="button"
+                  onClick={filterData}
+                >
+                  <Search /> Search
+                </button>
+                <button
+                  className="btn btn-dark"
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    fetchData();
+                  }}
+                >
+                  <Loop /> Reset
+                </button>
+              </div>
+            </div>
             {adminPermission(authContext.user.role) && (
               <a
                 className="btn btn-success"
@@ -292,22 +325,13 @@ export default function Page() {
               </a>
             )}
           </div>
-          <DataGrid
-            columns={
-              columns as {
-                field: string;
-                headerName: string;
-                width: number;
-                key: string;
-                flex: number;
-                renderCell?: undefined;
-              }[]
-            }
+          <Table
+            columns={columns}
             loading={loading}
-            rows={data.map((row: any, i) => ({
+            dataSource={data.map((row: any, i) => ({
               sno: i + 1,
               id: row.id,
-              name: row.name,
+              name: row?.name,
               phone: row.phone,
               address: row.address,
               qad: row.qad,
@@ -323,18 +347,22 @@ export default function Page() {
               collarType: row.collarType,
               order: row.order,
             }))}
-            autoHeight
-            slots={{
-              toolbar: GridToolbar,
-            }}
-            onPaginationModelChange={(e) => console.log("____pagination", e)}
           />
         </>
       </div>
       {showModal && (
         <div className="container">
-          <h3>{updatingId ? "Update" : "Add"} Order Record</h3>
-          <Box sx={{ width: "100%" }}>
+          <div className="d-flex justify-content-between">
+            <h3>{updatingId ? "Update" : "Add"} Order Record</h3>
+            <button
+              className="btn btn-danger"
+              onClick={() => setShowModal(false)}
+            >
+              X Close
+            </button>
+          </div>
+          <br />
+          <div style={{ width: "100%", minHeight: "400px" }}>
             <Stepper activeStep={activeStep}>
               {steps.map((step, index) => (
                 <Step key={step.key}>
@@ -343,29 +371,31 @@ export default function Page() {
               ))}
             </Stepper>
             {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography sx={{ mt: 2, mb: 1 }}>
+              <>
+                <p style={{ marginTop: 2, marginBottom: 1 }}>
                   All steps completed - you&apos;re finished
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                  <Box sx={{ flex: "1 1 auto" }} />
-                  <Button onClick={handleReset}>Reset</Button>
-                </Box>
-              </React.Fragment>
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingTop: 2,
+                  }}
+                >
+                  <div style={{ flex: "1 1 auto" }} />
+                  <button className="btn btn-dark" onClick={handleReset}>
+                    Reset
+                  </button>
+                </div>
+              </>
             ) : (
-              <React.Fragment>
-                <Typography sx={{ mt: 2, mb: 1 }}>
+              <>
+                <p style={{ marginTop: 2, marginBottom: 1 }}>
                   Step {activeStep + 1}
-                </Typography>
+                </p>
                 {activeStep === 3 ? (
                   <div>
                     <h3>Review Information</h3>
-                    <div>
-                      <p>Name: {formData?.name}</p>
-                      <p>Phone: {formData?.phone}</p>
-                      <p>Address: {formData?.address}</p>
-                    </div>
-                    <hr />
                     <div
                       style={{
                         display: "flex",
@@ -373,37 +403,82 @@ export default function Page() {
                       }}
                     >
                       <div>
-                        <p>qad: {formData?.qad}</p>
-                        <p>width: {formData?.width}</p>
-                        <p>arm: {formData?.arm}</p>
-                        <p>cuff: {formData?.cuff}</p>
-                        <p>chest: {formData?.chest}</p>
+                        <p>Name: {formData?.name}</p>
+                        <p>Phone: {formData?.phone}</p>
+                        <p>Address: {formData?.address}</p>
+                        <p>Extra Order: {formData?.order}</p>
+                        <div>
+                          <textarea
+                            className="form-control"
+                            placeholder="Order"
+                            value={formData.order?.toString()}
+                            id="order"
+                            name="order"
+                            onChange={(e) =>
+                              handleInputChange("order", e.target.value)
+                            }
+                          />
+                        </div>
                       </div>
                       <div>
-                        <p>daman: {formData?.daman}</p>
-                        <p>collar: {formData?.collar}</p>
-                        <p>pant: {formData?.pant}</p>
-                        <p>pantCuff: {formData?.pantCuff}</p>
+                        {steps[2].fields.map((item) => {
+                          if (
+                            item.id === formData.frontPocket ||
+                            item.id === formData.collarType
+                          )
+                            return item.id === "no" ? (
+                              <p style={{ color: "red" }}>{item.label}</p>
+                            ) : (
+                              <>
+                                <img src={item.label} width={100} />
+                                <hr />
+                              </>
+                            );
+                        })}
                       </div>
                       <div>
-                        <p>frontPocket: {formData?.frontPocket}</p>
-                        <p>collarType: {formData?.collarType}</p>
+                        <table className="table">
+                          <tr>
+                            <td>Qad</td>
+                            <td>{formData?.qad}</td>
+                          </tr>
+                          <tr>
+                            <td>Width</td>
+                            <td>{formData?.width}</td>
+                          </tr>
+
+                          <tr>
+                            <td>Arm</td>
+                            <td>{formData?.arm}</td>
+                          </tr>
+                          <tr>
+                            <td>Cuff</td>
+                            <td>{formData?.cuff}</td>
+                          </tr>
+                          <tr>
+                            <td>Chest</td>
+                            <td>{formData?.chest}</td>
+                          </tr>
+                          <tr>
+                            <td>Daman</td>
+                            <td>{formData?.daman}</td>
+                          </tr>
+                          <tr>
+                            <td>Collar</td>
+                            <td>{formData?.collar}</td>
+                          </tr>
+                          <tr>
+                            <td>Pant</td>
+                            <td>{formData?.pant}</td>
+                          </tr>
+                          <tr>
+                            <td>Pant Cuff</td>
+                            <td>{formData?.pantCuff}</td>
+                          </tr>
+                        </table>
                       </div>
                     </div>
                     <hr />
-                    <p>Order: {formData?.order}</p>
-                    <div>
-                      <input
-                        className="form-control"
-                        placeholder="Order"
-                        value={formData.order?.toString()}
-                        id="order"
-                        name="order"
-                        onChange={(e) =>
-                          handleInputChange("order", e.target.value)
-                        }
-                      />
-                    </div>
                   </div>
                 ) : (
                   <div
@@ -432,11 +507,17 @@ export default function Page() {
                               <CheckCircleRoundedIcon />
                             )}
                             <label>
-                              <img
-                                src={field.label}
-                                alt={field.label}
-                                style={{ width: "80px", cursor: "pointer" }}
-                              />
+                              {field.id === "no" ? (
+                                <button style={{ color: "red" }}>
+                                  {field.label}
+                                </button>
+                              ) : (
+                                <img
+                                  src={field.label}
+                                  alt={field.label}
+                                  style={{ width: "80px", cursor: "pointer" }}
+                                />
+                              )}
                             </label>
                           </div>
                         ) : (
@@ -464,31 +545,39 @@ export default function Page() {
                     ))}
                   </div>
                 )}
-                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                  <Button
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingTop: 2,
+                  }}
+                >
+                  <button
+                    className="btn btn-secondary"
                     color="inherit"
                     disabled={activeStep === 0}
                     onClick={handleBack}
-                    sx={{ mr: 1 }}
                   >
                     Back
-                  </Button>
-                  <Box sx={{ flex: "1 1 auto" }} />
+                  </button>
+                  <div style={{ flex: "1 1 auto" }} />
 
-                  <Button onClick={handleNext}>
+                  <button className="btn btn-primary" onClick={handleNext}>
                     {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                  </Button>
+                  </button>
                   {activeStep === steps.length - 1 && (
-                    <button onClick={handleSubmit} className="btn btn-dark">
+                    <button onClick={handleSubmit} className="btn btn-success">
                       Submit
                     </button>
                   )}
-                </Box>
-              </React.Fragment>
+                </div>
+              </>
             )}
-          </Box>
+          </div>
         </div>
       )}
     </>
+  ) : (
+    <UnAuthorized />
   );
 }
