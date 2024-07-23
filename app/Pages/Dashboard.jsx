@@ -6,17 +6,23 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
 } from "@ant-design/icons";
-import { Avatar, Card, Col, Row, Statistic } from "antd";
+import { Avatar, Card, Carousel, Col, Row, Statistic } from "antd";
 import Header from "../components/Header";
 const { Meta } = Card;
 export default function Dashboard() {
   const cards = [
     {
-      title: "Simple",
-      description: "This is the description",
+      title: "New Designs",
+      description: "2024 New Collection",
       image:
         "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
       avatar: "https://api.dicebear.com/7.x/miniavs/svg?seed=8",
+      carouselItems: [
+        "/assets/carousel/1.jpg",
+        "/assets/carousel/3.jpg",
+        "/assets/carousel/4.jpg",
+        "/assets/carousel/5.jpg",
+      ],
     },
     {
       title: "Simple",
@@ -36,22 +42,7 @@ export default function Dashboard() {
   return (
     <>
       <Header />
-      <div>
-        {/* <Carousel arrows autoplay>
-          <div>
-            <img src="/assets/carousel/1.jpg" width="100%" />
-          </div>
-
-          <div>
-            <img src="/assets/carousel/3.jpg" width="100%" />
-          </div>
-          <div>
-            <img src="/assets/carousel/4.jpg" width="100%" />
-          </div>
-          <div>
-            <img src="/assets/carousel/5.jpg" width="100%" />
-          </div>
-        </Carousel> */}
+      <div className="container">
         <Row gutter={16}>
           <Col span={6}>
             <Card bordered={false} style={{ margin: 10 }}>
@@ -82,7 +73,19 @@ export default function Dashboard() {
           {cards.map((card) => (
             <Card
               style={{ width: 300, margin: 15 }}
-              cover={<img alt="example" src={card.image} />}
+              cover={
+                card.carouselItems?.length > 0 ? (
+                  <Carousel arrows autoplay>
+                    {card.carouselItems?.map((img) => (
+                      <div>
+                        <img src={img} width="100%" />
+                      </div>
+                    ))}
+                  </Carousel>
+                ) : (
+                  <img src={card.image} width="100%" />
+                )
+              }
               actions={[
                 <SettingOutlined key="setting" />,
                 <EditOutlined key="edit" />,

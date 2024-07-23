@@ -14,12 +14,24 @@ import { headerTabs, localVariable, personalInformation } from "@/data";
 import { AuthContext } from "../Context/AuthContext";
 import Link from "next/link";
 import { Add, List, Logout, Person } from "@mui/icons-material";
+import MenuIcon from "@mui/icons-material/Menu";
 import UserCreateForm from "./UserCreateForm";
+import { Drawer } from "antd";
 
 function Header() {
   const authContext = useContext(AuthContext);
   const [showUserModal, setShowUserModal] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -44,6 +56,36 @@ function Header() {
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
+            <MenuIcon onClick={showDrawer} />
+            <Drawer
+              style={{ backgroundColor: "transparent" }}
+              title="Side Bar"
+              placement="left"
+              onClose={onClose}
+              open={open}
+            >
+              <Box>
+                {headerTabs.map((tab) =>
+                  adminPermission(authContext?.user?.role) ||
+                  tab.permissions.some(
+                    (perm) => perm === authContext?.user?.role
+                  ) ? (
+                    <Link
+                      className="btn btn-primary"
+                      href={tab.link}
+                      style={{
+                        marginRight: 15,
+                        marginTop: 15,
+                        textDecoration: "none",
+                        display: "block",
+                      }}
+                    >
+                      {tab.label}
+                    </Link>
+                  ) : null
+                )}
+              </Box>
+            </Drawer>
             <Link href="/">
               <img src="/assets/logo.png" width={100} />
             </Link>
