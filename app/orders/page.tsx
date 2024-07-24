@@ -12,6 +12,7 @@ import { Step, StepLabel, Stepper } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import Link from "next/link";
 import UnAuthorized from "../components/UnAuthorized";
+import OrderModal from "./OrderModal";
 let endpoint = "orders";
 const permittedTo = "ADMIN";
 export default function Page() {
@@ -241,6 +242,10 @@ export default function Page() {
       dataIndex: "address",
     },
     {
+      title: "Returning Date",
+      dataIndex: "returnDate",
+    },
+    {
       title: "Action",
       dataIndex: "action",
       render: (_: any, row: any) => (
@@ -334,6 +339,7 @@ export default function Page() {
               name: row?.name,
               phone: row.phone,
               address: row.address,
+              returnDate: row.returnDate,
               qad: row.qad,
               width: row.width,
               arm: row.arm,
@@ -351,6 +357,16 @@ export default function Page() {
         </>
       </div>
       {showModal && (
+        <OrderModal
+          setShowModal={setShowModal}
+          updatingId={updatingId}
+          setUpdatingId={setUpdatingId}
+          fetchData={fetchData}
+          formData={formData}
+          setFormData={setFormData}
+        />
+      )}
+      {/* {showModal && (
         <div className="container">
           <div className="d-flex justify-content-between">
             <h3>{updatingId ? "Update" : "Add"} Order Record</h3>
@@ -575,7 +591,7 @@ export default function Page() {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </>
   ) : (
     <UnAuthorized />
